@@ -1,4 +1,4 @@
-var Observer = require("./dist/observer.js");
+var Observer = require("observer");
 
 var userObject = {
    username : 'kucukkanat',

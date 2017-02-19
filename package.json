@@ -1,5 +1,5 @@
 {
-  "name": "observable",
+  "name": "observer",
   "version": "0.0.2",
   "description": "",
   "main": "dist/observer.js",
