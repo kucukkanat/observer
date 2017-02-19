@@ -39,4 +39,4 @@ var Observer = function(obj) {
    })
 */
 
-module.exports = 666;
+module.exports = Observer;
