@@ -1,40 +1,42 @@
-var _ = require('underscore');
 
 var Observer = function(obj) {
-   var self = this;
-   this.object = obj;
+    let watchingFn = null
+    const observe = (data)=>{
+        const dependencies = {}
+        return new Proxy(data,{
+            get(obj, key) {
+                if (watchingFn) {
+                    if (!dependencies[key]) {
+                        dependencies[key] = []
+                    }
+                    dependencies[key].push(watchingFn)
+                }
+                return obj[key]
+            },
+            set(obj, key, value) {
+                obj[key] = value
+                if (dependencies[key]) {
+                    dependencies[key].forEach(cb=>cb(key))
+                }
 
-   this.watch = function(key){
-      var self = this;
-      return{
-         then : function(callback){
-            if(typeof self.object[key] != 'object'){
-               Object.defineProperty(self.object, key, {
-                  get: function(val) {
-                     return this["_"+key];
-                  },
-
-                  set: function(val) {
-                     callback(val);
-                     this["_"+key] = val;
-                  }
-               })
             }
-            else{
-               console.warn("You cannot observe an object property which is an object! : '"+key+"'");
-            }
+        })
+    }
 
-         }
-      }
-   }
+    const watcher = (target)=>{
+        watchingFn = target
+        target()
+        watchingFn = null
+    }
+    this.observe = observe
+    this.watcher = watcher
 
 }
 
 /**
    Example Usage :
-   var userObserver = new Observer(userObject)
-   userObserver.watch('username')
-   .then(function(newValue){
+   Observer.observe(userObject)
+   Observer.watcher(function(newValue){
       // Do something with new value here
    })
 */
